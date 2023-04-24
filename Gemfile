@@ -70,3 +70,5 @@ end
 group :test do
   gem 'shoulda-matchers'
 end
+
+gem "tailwindcss-rails", "~> 2.0"
