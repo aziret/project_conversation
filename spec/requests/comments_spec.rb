@@ -29,6 +29,8 @@ RSpec.describe "/comments", type: :request do
     }
   }
 
+  let!(:project) { create(:project) }
+
   describe "GET /index" do
     it "renders a successful response" do
       Comment.create! valid_attributes
@@ -64,27 +66,27 @@ RSpec.describe "/comments", type: :request do
     context "with valid parameters" do
       it "creates a new Comment" do
         expect {
-          post comments_url, params: { comment: valid_attributes }
+          post comments_url, params: { comment: valid_attributes.merge(project_id: project.id) }
         }.to change(Comment, :count).by(1)
       end
 
-      it "redirects to the created comment" do
-        post comments_url, params: { comment: valid_attributes }
-        expect(response).to redirect_to(comment_url(Comment.last))
+      it "redirects to project show page" do
+        post comments_url, params: { comment: valid_attributes.merge(project_id: project.id) }
+        expect(response).to redirect_to(project_url(project))
       end
     end
 
     context "with invalid parameters" do
       it "does not create a new Comment" do
         expect {
-          post comments_url, params: { comment: invalid_attributes }
+          post comments_url, params: { comment: invalid_attributes.merge(project_id: project.id) }
         }.to change(Comment, :count).by(0)
       end
 
     
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post comments_url, params: { comment: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
+      it "renders to project show page" do
+        post comments_url, params: { comment: invalid_attributes.merge(project_id: project.id) }
+        expect(response).to render_template("projects/show")
       end
     
     end

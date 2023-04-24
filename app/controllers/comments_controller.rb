@@ -32,7 +32,6 @@ class CommentsController < ApplicationController
         render 'projects/show'
       end
     end
-    render 'projects/show' if @comment.id.nil?
   end
 
   # PATCH/PUT /comments/1 or /comments/1.json

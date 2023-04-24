@@ -17,14 +17,14 @@
     <%= form_for [@project, @project.project_histories.build] do |f| %>
       <%= f.hidden_field :actionable_type, value: 'Status' %>
       <%= f.label :status_id %>
-      <%= f.collection_select :actionable_id, @statuses, :id, :name %>
+      <%= f.collection_select :actionable_id, @statuses || [], :id, :name %>
       <%= f.submit 'Update Status', class: 'btn btn-primary' %>
     <% end %>
 
     <section class="bg-white dark:bg-gray-900 py-8 lg:py-16">
       <div class="max-w-2xl mx-auto px-4">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussions and status updates (<%= @project_histories.count %>)</h2>
+          <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussions and status updates (<%= @project_histories&.count || 0 %>)</h2>
         </div>
         <%= form_with(model: @comment, url: comments_path, method: :post, class: "mb-6") do |form| %>
           <%= form.hidden_field :project_id, value: @project.id %>
@@ -35,7 +35,7 @@
           <%= form.submit 'Add Comment', class: "buttons inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 cursor-pointer" %>
         <% end %>
 
-        <% @project_histories.each do |project_history| %>
+        <% @project_histories && @project_histories.each do |project_history| %>
           <% if project_history.actionable_type == 'Status' %>
             <article class="p-6 mb-6 text-base bg-white border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
               <p class="text-sm text-gray-600 dark:text-gray-400"><span class="text-green-800">Status update: <%= project_history.actionable.name %></span><time pubdate datetime=<%= "#{project_history.created_at.to_formatted_s(:short_db)}"%> title=<%= "#{project_history.created_at.to_formatted_s(:short_ordinal)}"%>> <%= project_history.created_at.to_formatted_s(:short_ordinal)%></time></p>
