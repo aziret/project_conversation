@@ -1,14 +1,13 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Projects</h1>
-
-<div id="projects">
+<div class="w-[800px] rounded overflow-hidden shadow-lg w-full bg-slate-100 mx-auto">
+  <h1 class="text-2xl m-3.5">Projects</h1>
+  <%= link_to "New project", new_project_path, class: "inline-block hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded mb-3" %>
   <% @projects.each do |project| %>
-    <%= render project %>
-    <p>
-      <%= link_to "Show this project", project %>
-    </p>
+    <div
+    class="block rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 w-[800px]">
+      <%= render project %>
+      <%= link_to "Show this project", project, class: "inline-block hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded m-auto" %>
+    </div>
   <% end %>
 </div>
-
-<%= link_to "New project", new_project_path %>

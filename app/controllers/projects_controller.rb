@@ -8,6 +8,10 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1 or /projects/1.json
   def show
+    @project_histories = @project.project_histories.order(:asc)
+    @project_history = @project.project_histories.new
+    @comment = Comment.new
+    @statuses = Status.all
   end
 
   # GET /projects/new
@@ -60,7 +64,10 @@ class ProjectsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_project
-      @project = Project.find(params[:id])
+      @project = Project.joins("LEFT JOIN project_histories ON project_histories.project_id = projects.id")
+                      .joins("LEFT JOIN comments ON comments.id = project_histories.actionable_id AND project_histories.actionable_type = 'Comment'")
+                      .joins("LEFT JOIN statuses ON statuses.id = project_histories.actionable_id AND project_histories.actionable_type = 'Status'")
+                      .find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

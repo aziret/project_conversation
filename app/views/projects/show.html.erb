@@ -1,10 +1,64 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @project %>
+<div class="rounded overflow-hidden shadow-lg w-full bg-slate-100  mx-auto">
+  <div
+    class="block rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 w-[800px] mx-auto">
+    <%= render @project %>
+    
+    <div>
+      <%= link_to "Edit this project", edit_project_path(@project) %> |
+      <%= link_to "Back to projects", projects_path %>
 
-<div>
-  <%= link_to "Edit this project", edit_project_path(@project) %> |
-  <%= link_to "Back to projects", projects_path %>
+      <%= button_to "Destroy this project", @project, method: :delete %>
+    </div>
 
-  <%= button_to "Destroy this project", @project, method: :delete %>
+    <h2>Change Status</h2>
+
+    <%= form_for [@project, @project.project_histories.build] do |f| %>
+      <%= f.hidden_field :actionable_type, value: 'Status' %>
+      <%= f.label :status_id %>
+      <%= f.collection_select :actionable_id, @statuses, :id, :name %>
+      <%= f.submit 'Update Status', class: 'btn btn-primary' %>
+    <% end %>
+
+    <section class="bg-white dark:bg-gray-900 py-8 lg:py-16">
+      <div class="max-w-2xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Discussions and status updates (<%= @project_histories.count %>)</h2>
+        </div>
+        <%= form_with(model: @comment, url: comments_path, method: :post, class: "mb-6") do |form| %>
+          <%= form.hidden_field :project_id, value: @project.id %>
+          <div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+          <%= form.label :content, 'Your comment', class: "sr-only" %>
+          <%= form.text_area :content, rows: '6', class: "px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800", placeholder: "Write a comment...", required: true %>
+          </div>
+          <%= form.submit 'Add Comment', class: "buttons inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 cursor-pointer" %>
+        <% end %>
+
+        <% @project_histories.each do |project_history| %>
+          <% if project_history.actionable_type == 'Status' %>
+            <article class="p-6 mb-6 text-base bg-white border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+              <p class="text-sm text-gray-600 dark:text-gray-400"><span class="text-green-800">Status update: <%= project_history.actionable.name %></span><time pubdate datetime=<%= "#{project_history.created_at.to_formatted_s(:short_db)}"%> title=<%= "#{project_history.created_at.to_formatted_s(:short_ordinal)}"%>> <%= project_history.created_at.to_formatted_s(:short_ordinal)%></time></p>
+            </article>
+          <% end %>
+
+          <% if project_history.actionable_type == 'Comment' %>
+            <article class="p-6 mb-6 text-base bg-white border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+              <footer class="flex justify-between items-center mb-2">
+                  <div class="flex items-center">
+                      <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white"><img
+                              class="mr-2 w-6 h-6 rounded-full"
+                              src="https://flowbite.com/docs/images/people/profile-picture-3.jpg"
+                              alt="Bonnie Green">Bonnie Green</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-400"><time pubdate datetime=<%= "#{project_history.created_at.to_formatted_s(:short_db)}"%>
+                              title=<%= "#{project_history.created_at.to_formatted_s(:short_ordinal)}"%>> <%= project_history.created_at.to_formatted_s(:short_ordinal)%></time></p>
+                  </div>
+              </footer>
+              <p class="text-gray-500 dark:text-gray-400"><%= project_history.actionable.content %></p>
+            </article>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  </div>
 </div>

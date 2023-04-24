@@ -13,6 +13,6 @@ class Project < ApplicationRecord
                       }, through: :project_histories, source: :actionable, source_type: 'Status'
 
   def most_recent_status
-    statuses.order(created_at: :desc).limit(1).first.name
+    statuses.order(created_at: :desc).limit(1).first&.name
   end
 end
